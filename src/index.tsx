@@ -8,7 +8,7 @@ const componentClicked = () => {
   console.log("component was clicked");
 };
 
-const responseFacebook = response => {
+const responseFacebook = (response: any) => {
   console.log("response from facebook", response);
 };
 
