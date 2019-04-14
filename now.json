@@ -7,8 +7,10 @@
       "config": { "distDir": "build" }
     }
   ],
-  "env": {
-    "REACT_APP_SERVER_HOSTNAME": "https://poc-facebook-central-login-git-master.rcacheira.now.sh",
-    "REACT_APP_FACEBOOK_APP_ID": "@react_app_facebook_app_id"
+  "build": {
+    "env": {
+      "REACT_APP_SERVER_HOSTNAME": "https://poc-facebook-central-login-git-master.rcacheira.now.sh",
+      "REACT_APP_FACEBOOK_APP_ID": "@react_app_facebook_app_id"
+    }
   }
 }
