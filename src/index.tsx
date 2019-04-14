@@ -7,7 +7,7 @@ import "./styles.css";
 const facebookAppId = "334372117215622";
 const onlineServer =
   "https://poc-facebook-central-login-git-master.rcacheira.now.sh";
-// const onlineServer = "http://localhost:3001/authenticate";
+// const onlineServer = "http://localhost:3001";
 
 interface CentralLoginInfo {
   error?: number;
@@ -35,7 +35,7 @@ class App extends React.Component<{}, AppState> {
   };
 
   validateLoginOnline = async (facebookAccessToken: string) => {
-    const response = await fetch(onlineServer, {
+    const response = await fetch(`${onlineServer}/authenticate`, {
       method: "GET",
       headers: {
         "X-FacebookAccessToken": facebookAccessToken
