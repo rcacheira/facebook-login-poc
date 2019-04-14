@@ -5,9 +5,9 @@ import FacebookLogin, { ReactFacebookLoginInfo } from "react-facebook-login";
 import "./styles.css";
 
 const facebookAppId = "334372117215622";
-// const onlineServer =
-//   "https://poc-facebook-central-login-git-master.rcacheira.now.sh";
-const onlineServer = "http://localhost:3001/authenticate";
+const onlineServer =
+  "https://poc-facebook-central-login-git-master.rcacheira.now.sh";
+// const onlineServer = "http://localhost:3001/authenticate";
 
 interface CentralLoginInfo {
   error?: number;
