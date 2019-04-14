@@ -1,7 +1,5 @@
 export const serverHostname = process.env.REACT_APP_SERVER_HOSTNAME;
 
-console.log("server hostname:", serverHostname);
-
 export interface CentralUserInfo {
   email: string;
   name: string;
