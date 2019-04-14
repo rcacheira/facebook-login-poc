@@ -1,5 +1,4 @@
-export const serverHostname =
-  process.env.SERVER_HOSTNAME || "http://localhost:3001";
+export const serverHostname = process.env.REACT_APP_SERVER_HOSTNAME;
 
 export interface CentralUserInfo {
   email: string;
