@@ -4,7 +4,7 @@ import { CentralUserInfo, facebookLoginValidation } from "./server";
 
 const facebookAppId = process.env.REACT_APP_FACEBOOK_APP_ID || "";
 
-console.log("appid", facebookAppId);
+console.log("appid:", facebookAppId);
 
 interface CentralUserInfoState {
   error?: Error;
