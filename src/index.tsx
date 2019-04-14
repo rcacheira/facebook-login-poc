@@ -10,7 +10,7 @@ const onlineServer =
 // const onlineServer = "http://localhost:3001";
 
 interface CentralLoginInfo {
-  error?: number;
+  error?: string;
   userInfo?: {
     email: string;
     name: string;
@@ -35,18 +35,26 @@ class App extends React.Component<{}, AppState> {
   };
 
   validateLoginOnline = async (facebookAccessToken: string) => {
-    const response = await fetch(`${onlineServer}/authenticate`, {
-      method: "GET",
-      headers: {
-        "X-FacebookAccessToken": facebookAccessToken
+    try {
+      const response = await fetch(`${onlineServer}/authenticate`, {
+        method: "GET",
+        headers: {
+          "X-FacebookAccessToken": facebookAccessToken
+        }
+      });
+      if (response.status !== 200) {
+        this.setState({
+          centralLoginInfo: { error: `http status code: ${response.status}` }
+        });
+        return;
       }
-    });
-    if (response.status !== 200) {
-      this.setState({ centralLoginInfo: { error: response.status } });
-      return;
+      const resp = await response.json();
+      this.setState({ centralLoginInfo: { userInfo: resp } });
+    } catch (error) {
+      this.setState({
+        centralLoginInfo: { error: error.message }
+      });
     }
-    const resp = await response.json();
-    this.setState({ centralLoginInfo: { userInfo: resp } });
   };
 
   renderFacebookLoginButton = () => (
