@@ -1,31 +1,82 @@
 import * as React from "react";
 import { render } from "react-dom";
-import FacebookLogin from "react-facebook-login";
+import FacebookLogin, { ReactFacebookLoginInfo } from "react-facebook-login";
 
 import "./styles.css";
 
-const componentClicked = () => {
-  console.log("component was clicked");
-};
+const facebookAppId = "334372117215622";
+const onlineServer =
+  "https://poc-facebook-central-login-git-master.rcacheira.now.sh";
 
-const responseFacebook = (response: any) => {
-  console.log("response from facebook", response);
-};
+interface AppState {
+  facebookLoginInfo?: ReactFacebookLoginInfo;
+  onlineLoginInfo?: { error: number };
+}
 
-function App() {
-  return (
-    <div className="App">
-      <h1>Facebook Login CodeSandbox</h1>
-      <FacebookLogin
-        appId="334372117215622"
-        autoLoad={true}
-        fields="name,email,picture"
-        onClick={componentClicked}
-        callback={responseFacebook}
-      />
-      ,
-    </div>
-  );
+class App extends React.Component<{}, AppState> {
+  constructor(props: any) {
+    super(props);
+    this.state = {};
+  }
+
+  responseFacebook = (response: ReactFacebookLoginInfo) => {
+    this.setState({ facebookLoginInfo: response });
+  };
+
+  validateLoginOnline = async () => {
+    if (!this.state.facebookLoginInfo) {
+      return;
+    }
+
+    const response = await fetch(onlineServer, {
+      method: "GET",
+      headers: {
+        "X-FacebookAccessToken": this.state.facebookLoginInfo.accessToken
+      }
+    });
+    if (response.status !== 200) {
+      this.setState({ onlineLoginInfo: { error: response.status } });
+      return;
+    }
+    const resp = await response.json();
+    this.setState({ onlineLoginInfo: resp });
+  };
+
+  render() {
+    const { facebookLoginInfo, onlineLoginInfo } = this.state;
+
+    return (
+      <div className="App">
+        <h1>Facebook Login</h1>
+        {!facebookLoginInfo && (
+          <div>
+            <FacebookLogin
+              appId={facebookAppId}
+              autoLoad={true}
+              fields="name,email,picture"
+              callback={this.responseFacebook}
+            />
+          </div>
+        )}
+        {facebookLoginInfo && (
+          <>
+            <h2>Facebook User Info</h2>
+            <div>
+              <img src={(facebookLoginInfo as any).picture.data.url} />
+              <p>{facebookLoginInfo.name}</p>
+              <p>{facebookLoginInfo.email}</p>
+            </div>
+            <div>
+              <button type="button" onClick={this.validateLoginOnline}>
+                Validate online
+              </button>
+            </div>
+            {onlineLoginInfo && <div>{JSON.stringify(onlineLoginInfo)}</div>}
+          </>
+        )}
+      </div>
+    );
+  }
 }
 
 const rootElement = document.getElementById("root");
