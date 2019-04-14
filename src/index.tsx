@@ -5,12 +5,22 @@ import FacebookLogin, { ReactFacebookLoginInfo } from "react-facebook-login";
 import "./styles.css";
 
 const facebookAppId = "334372117215622";
-const onlineServer =
-  "https://poc-facebook-central-login-git-master.rcacheira.now.sh";
+// const onlineServer =
+//   "https://poc-facebook-central-login-git-master.rcacheira.now.sh";
+const onlineServer = "http://localhost:3001/authenticate";
+
+interface CentralLoginInfo {
+  error?: number;
+  userInfo?: {
+    email: string;
+    name: string;
+    picture: { height: number; width: number; url: string };
+  };
+}
 
 interface AppState {
-  facebookLoginInfo?: ReactFacebookLoginInfo;
-  onlineLoginInfo?: { error: number };
+  facebookAccessToken?: string;
+  centralLoginInfo?: CentralLoginInfo;
 }
 
 class App extends React.Component<{}, AppState> {
@@ -20,60 +30,76 @@ class App extends React.Component<{}, AppState> {
   }
 
   responseFacebook = (response: ReactFacebookLoginInfo) => {
-    this.setState({ facebookLoginInfo: response });
+    this.setState({ facebookAccessToken: response.accessToken });
+    this.validateLoginOnline(response.accessToken);
   };
 
-  validateLoginOnline = async () => {
-    if (!this.state.facebookLoginInfo) {
-      return;
-    }
-
+  validateLoginOnline = async (facebookAccessToken: string) => {
     const response = await fetch(onlineServer, {
       method: "GET",
       headers: {
-        "X-FacebookAccessToken": this.state.facebookLoginInfo.accessToken
+        "X-FacebookAccessToken": facebookAccessToken
       }
     });
     if (response.status !== 200) {
-      this.setState({ onlineLoginInfo: { error: response.status } });
+      this.setState({ centralLoginInfo: { error: response.status } });
       return;
     }
     const resp = await response.json();
-    this.setState({ onlineLoginInfo: resp });
+    this.setState({ centralLoginInfo: { userInfo: resp } });
+  };
+
+  renderFacebookLoginButton = () => (
+    <div>
+      <FacebookLogin
+        appId={facebookAppId}
+        autoLoad={true}
+        callback={this.responseFacebook}
+      />
+    </div>
+  );
+
+  renderLocalFacebookLoginInfo = () => (
+    <div>
+      <h3>We got a user token from a local facebook login</h3>
+    </div>
+  );
+
+  renderCentralLoginInfo = (centralLoginInfo: CentralLoginInfo) => {
+    if (centralLoginInfo.error) {
+      return (
+        <div>
+          <p>{`Error: ${centralLoginInfo.error}`}</p>
+        </div>
+      );
+    }
+    if (centralLoginInfo.userInfo) {
+      return (
+        <div>
+          <h2>Facebook User Info from our POC server</h2>
+          <div>
+            <img src={centralLoginInfo.userInfo.picture.url} />
+            <p>{centralLoginInfo.userInfo.name}</p>
+            <p>{centralLoginInfo.userInfo.email}</p>
+          </div>
+        </div>
+      );
+    }
+    return <div>Unknown error occurred</div>;
   };
 
   render() {
-    const { facebookLoginInfo, onlineLoginInfo } = this.state;
+    const { facebookAccessToken, centralLoginInfo } = this.state;
 
     return (
       <div className="App">
-        <h1>Facebook Login</h1>
-        {!facebookLoginInfo && (
-          <div>
-            <FacebookLogin
-              appId={facebookAppId}
-              autoLoad={true}
-              fields="name,email,picture"
-              callback={this.responseFacebook}
-            />
-          </div>
-        )}
-        {facebookLoginInfo && (
-          <>
-            <h2>Facebook User Info</h2>
-            <div>
-              <img src={(facebookLoginInfo as any).picture.data.url} />
-              <p>{facebookLoginInfo.name}</p>
-              <p>{facebookLoginInfo.email}</p>
-            </div>
-            <div>
-              <button type="button" onClick={this.validateLoginOnline}>
-                Validate online
-              </button>
-            </div>
-            {onlineLoginInfo && <div>{JSON.stringify(onlineLoginInfo)}</div>}
-          </>
-        )}
+        <h1>POC - Facebook Login with central validation</h1>
+
+        {facebookAccessToken
+          ? this.renderLocalFacebookLoginInfo()
+          : this.renderFacebookLoginButton()}
+
+        {centralLoginInfo && this.renderCentralLoginInfo(centralLoginInfo)}
       </div>
     );
   }
