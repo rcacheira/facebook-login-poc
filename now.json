@@ -9,6 +9,6 @@
   ],
   "env": {
     "REACT_APP_SERVER_HOSTNAME": "https://poc-facebook-central-login-git-master.rcacheira.now.sh",
-    "REACT_APP_FACEBOOK_APP_ID": "@facebook_app_id"
+    "REACT_APP_FACEBOOK_APP_ID": "@react_app_facebook_app_id"
   }
 }
