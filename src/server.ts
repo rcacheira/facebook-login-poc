@@ -1,7 +1,5 @@
 export const serverHostname =
-  process.env.SERVER_HOSTNAME ||
-  "https://poc-facebook-central-login-git-master.rcacheira.now.sh";
-// export const serverHostname = "http://localhost:3001";
+  process.env.SERVER_HOSTNAME || "http://localhost:3001";
 
 export interface CentralUserInfo {
   email: string;

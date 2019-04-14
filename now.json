@@ -6,5 +6,9 @@
       "use": "@now/static-build",
       "config": { "distDir": "build" }
     }
-  ]
+  ],
+  "env": {
+    "SERVER_HOSTNAME": "https://poc-facebook-central-login-git-master.rcacheira.now.sh",
+    "FACEBOOK_APP_ID": "@facebook_app_id"
+  }
 }

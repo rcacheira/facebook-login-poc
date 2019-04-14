@@ -2,7 +2,7 @@ import * as React from "react";
 import FacebookLogin, { ReactFacebookLoginInfo } from "react-facebook-login";
 import { CentralUserInfo, facebookLoginValidation } from "./server";
 
-const facebookAppId = "334372117215622";
+const facebookAppId = process.env.FACEBOOK_APP_ID || "";
 
 interface CentralUserInfoState {
   error?: Error;
