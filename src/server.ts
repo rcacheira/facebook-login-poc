@@ -9,9 +9,7 @@ export interface CentralUserInfo {
 export const facebookLoginValidation = async (
   accessToken: string
 ): Promise<CentralUserInfo> => {
-  const url = `${serverHostname}/authenticateFacebook`;
-  console.log(url);
-  const response = await fetch(url, {
+  const response = await fetch(`${serverHostname}/authenticateFacebook`, {
     method: "GET",
     headers: {
       "X-FacebookAccessToken": accessToken
